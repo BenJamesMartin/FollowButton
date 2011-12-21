@@ -257,6 +257,24 @@ class Profiles extends MulletMapper {
     }
     exit;
   }
+	
+	function twitterimage() {
+    session_start();
+  	require_once 'lib/twitter.php';
+  	require_once 'lib/OAuth.php';
+    $conn = new Mullet(REMOTE_USER,REMOTE_PASSWORD);
+    $coll = $conn->user->profiles;
+    $cursor = $coll->find(array(
+      'username' => $_SESSION['current_user']
+    ));
+    if ($cursor->hasNext()) {
+      $user = $cursor->getNext();
+    	$t = new Twitter( TW_KEY, TW_SEC );
+    	$t->authorize_from_access(  $user->twitter_token, $user->twitter_secret );
+      echo $t->twitterimage();
+    }
+    exit;
+  }
   
   function hastwitter() {
     session_start();

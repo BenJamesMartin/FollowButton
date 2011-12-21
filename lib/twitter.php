@@ -95,7 +95,7 @@ class Twitter {
   }
 
   function request_token() {
-	  $tk = new TwitterToken();
+	  $tk = new TwitterToken();	
 	  $req = OAuthRequest::from_consumer_and_token(
 		  $this->consumer,
 		  $this->token,
@@ -164,6 +164,37 @@ class Twitter {
 
 	function friends_timeline() {
 	  $url = 'https://twitter.com/statuses/friends_timeline.json';
+		$params = array(
+		  'oauth_consumer_key' => $this->consumer->key,
+		  'oauth_timestamp' => time(),
+		  'oauth_version' => OAuthRequest::$version,
+		  'oauth_nonce' => md5(microtime().mt_rand()),
+		  'oauth_token'=>$this->token->key
+		);
+	  $oauthRequest = OAuthRequest::from_request(
+	    'GET',
+	    $url,
+	    $params
+	  );
+	  $oauthRequest->sign_request(
+	    $this->method,
+	    $this->consumer,
+	    $this->token
+	  );
+	  $url = $oauthRequest->to_url();
+		$headers = array();
+	  $ch = curl_init();
+	  curl_setopt($ch, CURLOPT_URL, $url);
+	  curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+	  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	  curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
+	  curl_setopt($ch, CURLOPT_FAILONERROR, false);
+	  curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	  return @curl_exec($ch);
+	}
+	
+	function twitterimage() {
+	  $url = 'https://twitter.com/1/users/show.json?user_id=ifben';
 		$params = array(
 		  'oauth_consumer_key' => $this->consumer->key,
 		  'oauth_timestamp' => time(),
