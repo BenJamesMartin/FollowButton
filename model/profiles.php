@@ -142,6 +142,24 @@ class Profiles extends MulletMapper {
     }
     return array('ok'=>true);
   }
+	
+	function followbuttonstream() {
+		session_start();
+		$conn = new Mullet(REMOTE_USER, REMOTE_PASSWORD);
+		$coll = $conn->user->posts;
+    $cursor = $coll->find(array(
+      'username' => $_SESSION['current_user']
+    ));
+		while( $cursor->hasNext() ) {
+			$page = $cursor->getNext();
+       $pages[] = array(
+        'id' => $page->keyname,
+        'title' => $page->title
+      );
+		}
+		
+    return $pages;
+	}
 
   function facebook() {
     session_start();
@@ -271,7 +289,10 @@ class Profiles extends MulletMapper {
       $user = $cursor->getNext();
     	$t = new Twitter( TW_KEY, TW_SEC );
     	$t->authorize_from_access(  $user->twitter_token, $user->twitter_secret );
-      echo $t->twitterimage();
+      $json_data = json_decode($t->twitterimage());
+			$image_url = $json_data->profile_image_url;
+			$biggerImage = str_replace('normal', 'bigger', $image_url);
+			return array('imageUrl'=>$biggerImage);
     }
     exit;
   }

@@ -48,10 +48,44 @@ jQuery(function($){
 	"click .do-retweet"       : "doRetweet",
     "click #facebook-icon"    : "fbclick",
     "click #twitter-icon"     : "twclick",
+		"click #followbutton-icon": "followClick",
     "click #saveSettings"     : "saveSettings",
     "click #gplus-icon"       : "gclick",
     "click .twi-fav"          : "doFavorite"
     
+	},
+	
+	followClick: function(e) {
+		
+		if (!($("#followbutton-icon img").attr('src') == "image/followbutton-color.png")) {
+      $("#everyoneStream").html('');
+			$("#followbutton-icon img").attr('src', "image/followbutton-color.png");
+			// makes Facebook icon turn grey then quickly turn back to blue
+			$("#facebook-icon img").attr('src', "image/followbutton-grey.png");
+			
+		}
+		
+		
+		$.ajax({
+                     type : 'GET',
+                   	 url : 'html/posts/_followbutton.html',
+                     success : function(html) {
+                       var html = html;
+                       $.ajax({
+                          contentType: 'application/json',
+                          dataType: 'json',
+                          type : 'POST',
+                          data : JSON.stringify({}),
+                          url : '/profiles/followbuttonstream',
+                          success : function(req) {
+														for (var item in req){
+                           alert(req[item]['title']);
+														}
+													}
+											 });
+										 }
+									});
+		return false;
 	},
 	
 	doFavorite: function(e) {
@@ -684,14 +718,28 @@ jQuery(function($){
     },
   
     events: {
+		"click #me-tab"				: "showTwitterImage",
 	  "click #username"  : "account",
 	  "click #account"   : "account",
-      "click #showhide"  : "showHide",
-      "click #settings"  : "settings",
+     "click #showhide"  : "showHide",
+     "click #settings"  : "settings",
 	  "click #privacy"   : "privacy",
 	  "click #following" : "following",
       "click #logout"    : "logout",
     },
+		
+		showTwitterImage: function() {
+			$.ajax({
+				contentType: 'application/json',
+        dataType: 'json',
+				type: 'GET',
+				url : 'profiles/twitterimage',
+				success: function(img) {
+					$("#profile-image").attr('src', img['imageUrl']);
+				}
+			});
+			return false;
+		},
     
     logout: function() {
       $.ajax({

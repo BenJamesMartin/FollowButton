@@ -194,8 +194,9 @@ class Twitter {
 	}
 	
 	function twitterimage() {
-	  $url = 'https://twitter.com/1/users/show.json?user_id=ifben';
+	  $url = 'https://api.twitter.com/1/users/show.json';
 		$params = array(
+			'screen_name' => 'ifben',
 		  'oauth_consumer_key' => $this->consumer->key,
 		  'oauth_timestamp' => time(),
 		  'oauth_version' => OAuthRequest::$version,

@@ -130,11 +130,13 @@ class Posts extends MulletMapper {
 	}
 	
 	function post() {
+		session_start();
     $arr = json_decode(file_get_contents('php://input'));
   	$conn = new Mullet(REMOTE_USER,REMOTE_PASSWORD);
   	$coll = $conn->user->posts;
   	$result = $coll->insert(array(
-  	  'title' => $arr->title
+  	  'title' => $arr->title,
+			'username' => $_SESSION['current_user']
   	));
      if ($arr->sendtw == 1) {
        session_start();
